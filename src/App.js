@@ -45,24 +45,20 @@ function App() {
 
     const retval = [];
 
-    for (let bonners = 0; bonners < moreCount; bonners++) {
+    for (; moreCount > 0; moreCount--) {
       const boxes = getBoxes(pool, more);
       if (boxes) {
-        console.log('pushing ' + boxes);
         retval.push(boxes);
       } else {
-        console.log('break1');
         break;
       }
     }
 
-    for (let bonners = 0; bonners < lessCount; bonners++) {
+    for (; lessCount > 0; lessCount--) {
       const boxes = getBoxes(pool, less);
       if (boxes) {
-        console.log('pushing ' + boxes);
         retval.push(boxes);
       } else {
-        console.log('break2');
         break;
       }
     }
@@ -82,12 +78,22 @@ function App() {
 
     pool = pool.flat();
 
-    while (pool.length > 0) {
+    while (moreCount > 0) {
+      const boxes = [];
+      for (let i = 0; i < more; i++) {
+        boxes.push(pool.shift());
+      }
+      retval.push(boxes);
+      moreCount--;
+    }
+
+    while (lessCount > 0) {
       const boxes = [];
       for (let i = 0; i < less; i++) {
         boxes.push(pool.shift());
       }
       retval.push(boxes);
+      lessCount--;
     }
 
     for (let i = 0; i < retval.length; i++) {
@@ -301,31 +307,36 @@ function App() {
 
           { !error && result.length ? (
             <Grid container sx={{ width: '100%', marginTop: '10px'}}>
-              <Grid sm={4}>
-                <Grid sm={12} textAlign={'center'}>
-                  <h>Ordered</h>
+              <Grid item container xs={4}>
+                <Grid item xs={12} textAlign={'center'}>
+                  <h4 style={{ margin: '0px'}}>Ordered</h4>
                 </Grid>
-                <Grid sm={12} textAlign={'center'} sx={{ color: 'rgba(52, 52, 52, 0)'}}>
-                  <h>placeholder</h>
-                </Grid>
-                <Grid sm={12} textAlign={'center'}>
-                  <p style={{ whiteSpace: "pre-wrap" }}>
-                    {
-                      result.join("\n")
-                    }
-                  </p>              
+                <Grid item container xs={12}>
+                  <Grid item xs={12}>
+                    <Grid item xs={12} textAlign={'center'}>
+                      <h5>Boxes</h5>
+                    </Grid>
+                    <Grid item xs={12} textAlign={'center'}>
+                      <p style={{ whiteSpace: "pre-wrap" }}>
+                        {
+                        result.join("\n")
+                      }
+                      </p>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
-              <Grid container sm={8}>
-                <Grid sm={12} textAlign={'center'}>
-                  <h>Randomized</h>
+
+              <Grid item container xs={8}>
+                <Grid item xs={12} textAlign={'center'}>
+                  <h4 style={{ margin: '0px'}}>Randomized</h4>
                 </Grid>
-                <Grid container sm={12}>
-                  <Grid sm={names.length ? 3 : 9}>
-                    <Grid sm={12} textAlign={'center'}>
-                      <h>Runner</h>
+                <Grid item container xs={12}>
+                  <Grid item xs={names.length ? 3 : 9}>
+                    <Grid item xs={12} textAlign={'center'}>
+                      <h5>Runner</h5>
                     </Grid>
-                    <Grid sm={12} textAlign={'center'}>
+                    <Grid item xs={12} textAlign={'center'}>
                       <p style={{ whiteSpace: "pre-wrap" }}>
                         {
                           names.join("\n")
@@ -333,11 +344,11 @@ function App() {
                       </p>
                     </Grid>
                   </Grid>
-                  <Grid sm={names.length ? 6 : 0}>
-                    <Grid sm={12} textAlign={'center'}>
-                      <h>Boxes</h>
+                  <Grid item xs={names.length ? 6 : 0}>
+                    <Grid item xs={12} textAlign={'center'}>
+                      <h5>Boxes</h5>
                     </Grid>
-                    <Grid sm={12} textAlign={'center'}>
+                    <Grid item xs={12} textAlign={'center'}>
                       <p style={{ whiteSpace: "pre-wrap" }}>
                         {
                           shuffled.join("\n")
@@ -345,11 +356,11 @@ function App() {
                       </p>
                     </Grid>
                   </Grid>
-                  <Grid sm={names.length ? 3 : 3}>
-                    <Grid sm={12} textAlign={'center'}>
-                      <h>NX</h>
+                  <Grid item xs={names.length ? 3 : 3}>
+                    <Grid item xs={12} textAlign={'center'}>
+                      <h5>NX</h5>
                     </Grid>
-                    <Grid sm={12} textAlign={'center'}>
+                    <Grid item xs={12} textAlign={'center'}>
                       <p style={{ whiteSpace: "pre-wrap" }}>
                         {
                           nx.join("\n")
