@@ -264,7 +264,7 @@ function App() {
                         assignments.push(`${names[i]}:\t${shuffled[i]}`);
                       }
 
-                      navigator.clipboard.writeText(assignments.join("\n"));
+                      navigator.clipboard.writeText("```\n" + assignments.join("\n") + "\n```\n");
                     }}
                     variant="outlined"
                   >
@@ -286,7 +286,7 @@ function App() {
                         }
                       }
 
-                      navigator.clipboard.writeText(winners.join(", "));
+                      navigator.clipboard.writeText("```\n" + winners.join("\n") + "\n```\n");
                     }}
                     variant="outlined"
                   >
