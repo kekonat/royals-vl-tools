@@ -261,6 +261,18 @@ function App() {
                     type="submit" 
                     onClick={() => {
                       setOpenSnackbar(true)
+                      navigator.clipboard.writeText("```\n" + result.join("\n") + "\n```\n");
+                    }}
+                    variant="outlined"
+                  >
+                    Copy Ordered Bon
+                  </Button>        
+                </Grid>
+                <Grid item>
+                  <Button 
+                    type="submit" 
+                    onClick={() => {
+                      setOpenSnackbar(true)
                       const assignments = [];
                       const longestNameLength = Math.max(...(names.map(name => name.length)));
 
@@ -276,7 +288,7 @@ function App() {
                     }}
                     variant="outlined"
                   >
-                    Copy Bon
+                    Copy Randomized Bon
                   </Button>        
                 </Grid>
                 { names.length ? (
