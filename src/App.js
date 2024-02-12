@@ -12,14 +12,16 @@ function App() {
   const [openSnackbar, setOpenSnackbar] = useState(false)
 
   const handleClick = () => {
+    setNames([]);
+    setNx([]);
+    setError('');
+
     let parsed = parseInt(text);
     if (isNaN(parsed)) {
-      setError('');
       handleNames(text);
     } else if (parsed < 6 ||parsed > 30){
       setError('Please enter a number between 6-30');
     } else {
-      setError('');
       handleNumber(parsed);
     }
   }
@@ -260,10 +262,16 @@ function App() {
                     onClick={() => {
                       setOpenSnackbar(true)
                       const assignments = [];
-                      for (let i = 0; i < shuffled.length; i++) {
-                        assignments.push(`${names[i]}:\t${shuffled[i]}`);
-                      }
+                      const longestNameLength = Math.max(...(names.map(name => name.length)));
 
+                      for (let i = 0; i < shuffled.length; i++) {
+                        if (names.length) {
+                          const nameWithPadding = names[i].padEnd(longestNameLength, ' ');
+                          assignments.push(`${nameWithPadding}  ${shuffled[i]}`);
+                        } else {
+                          assignments.push(shuffled[i]);
+                        }
+                      }
                       navigator.clipboard.writeText("```\n" + assignments.join("\n") + "\n```\n");
                     }}
                     variant="outlined"
@@ -271,28 +279,31 @@ function App() {
                     Copy Bon
                   </Button>        
                 </Grid>
-                <Grid item>
-                  <Button 
-                    type="submit" 
-                    onClick={() => {
-                      setOpenSnackbar(true)
-                      const winners = [];
-                      for (let i = 0; i < nx.length; i++) {
-                        const count = nx[i];
-                        if (count === 1) {
-                          winners.push(`${names[i]}`);
-                        } else if (count > 1) {
-                          winners.push(`${names[i]}x${count}`);
+                { names.length ? (
+                  <Grid item>
+                    <Button 
+                      type="submit" 
+                      onClick={() => {
+                        setOpenSnackbar(true)
+                        const winners = [];
+                        for (let i = 0; i < nx.length; i++) {
+                          const count = nx[i];
+                          if (count === 1) {
+                            winners.push(`${names[i]}`);
+                          } else if (count > 1) {
+                            winners.push(`${names[i]}x${count}`);
+                          }
                         }
-                      }
-
-                      navigator.clipboard.writeText("```\n" + winners.join("\n") + "\n```\n");
-                    }}
-                    variant="outlined"
-                  >
-                    Copy NX
-                  </Button>        
-                </Grid>
+                        navigator.clipboard.writeText("```\n" + winners.join("\n") + "\n```\n");
+                      }}
+                      variant="outlined"
+                    >
+                      Copy NX
+                    </Button>        
+                  </Grid>
+                ) : (
+                  <Grid />
+                )}
                 <Snackbar
                   open={openSnackbar}
                   onClose={() => setOpenSnackbar(false)}
@@ -318,7 +329,7 @@ function App() {
                     </Grid>
                     <Grid item xs={12} textAlign={'center'}>
                       <p style={{ whiteSpace: "pre-wrap" }}>
-                        {
+                      {
                         result.join("\n")
                       }
                       </p>
@@ -332,19 +343,24 @@ function App() {
                   <h4 style={{ margin: '0px'}}>Randomized</h4>
                 </Grid>
                 <Grid item container xs={12}>
-                  <Grid item xs={names.length ? 3 : 9}>
-                    <Grid item xs={12} textAlign={'center'}>
-                      <h5>Runner</h5>
+                  { names.length ? (
+                    <Grid item xs={3}>
+                      <Grid item xs={12} textAlign={'center'}>
+                        <h5>Runner</h5>
+                      </Grid>
+                      <Grid item xs={12} textAlign={'center'}>
+                        <p style={{ whiteSpace: "pre-wrap" }}>
+                          {
+                            names.join("\n")
+                          }
+                        </p>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={12} textAlign={'center'}>
-                      <p style={{ whiteSpace: "pre-wrap" }}>
-                        {
-                          names.join("\n")
-                        }
-                      </p>
-                    </Grid>
-                  </Grid>
-                  <Grid item xs={names.length ? 6 : 0}>
+                  ) : (
+                    <Grid />
+                  )}
+
+                  <Grid item xs={names.length ? 6 : 9}>
                     <Grid item xs={12} textAlign={'center'}>
                       <h5>Boxes</h5>
                     </Grid>
@@ -356,7 +372,7 @@ function App() {
                       </p>
                     </Grid>
                   </Grid>
-                  <Grid item xs={names.length ? 3 : 3}>
+                  <Grid item xs={3}>
                     <Grid item xs={12} textAlign={'center'}>
                       <h5>NX</h5>
                     </Grid>
