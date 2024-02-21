@@ -224,7 +224,16 @@ function App() {
     <Grid className="App" >
       <header className="App-header">
         <p>
-          Please specify a number or list names of bonners
+          Please specify a number<br/>or<br/>List names of bonners
+          <br/>
+          <small>
+          <small>
+          <small>
+          (Example Number: 10)<br/>
+          (Example Names: Cody Clem Jae Harley Alice Em Kuro)
+          </small>
+          </small>
+          </small>
         </p>
         <Grid paddingLeft ={'20px'} paddingRight={'20px'}>
           <Grid container justifyContent="center">
