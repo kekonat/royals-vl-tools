@@ -248,7 +248,7 @@ function App() {
             </Grid>
             <Grid container rowSpacing={1}>
               <Grid item container justifyContent="center">
-                <Tooltip title="Randomly select, giving priority to those with few boxes" placement="top">
+                <Tooltip title="Randomly select 6 people for nx, giving priority to those with few boxes" placement="top">
                   <FormControlLabel
                     label="Include NX?"
                     control={
