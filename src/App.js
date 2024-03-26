@@ -321,7 +321,7 @@ function App() {
     <Grid className="App" >
       <header className="App-header" >
         <Grid paddingLeft ={'20px'} paddingRight={'20px'}>
-          <Grid container justifyContent="center" maxWidth={'1000px'}>
+          <Grid container justifyContent="center" maxWidth={'1200px'}>
             <Grid item xs={12}>
               <p style={{ margin: '10px'}}>
                 List names of bonners
@@ -593,8 +593,8 @@ function App() {
                   item 
                   minWidth={'300px'}
                   minHeight={'200px'} 
-                  maxWidth={'800px'} 
-                  maxHight={'500px'} 
+                  maxWidth={'1200px'} 
+                  maxHight={'700px'} 
                   marginTop={'10px'}
                   marginBottom={'10px'}
                 >
