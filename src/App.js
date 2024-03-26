@@ -380,7 +380,7 @@ function App() {
                   type="submit" 
                   onClick={handleClick}
                   variant="outlined"
-                  sx={{color: 'white', borderColor: 'white'}}
+                  sx={{color: 'white', borderColor: 'white', fontSize: '20px'}}
                 >
                     Generate
                 </Button>        
@@ -571,7 +571,7 @@ function App() {
                 <Grid item marginTop={'10px'} xs={12}>
                   <Button 
                     type="submit" 
-                    sx={{color: 'white', borderColor: 'white'}}
+                    sx={{color: 'white', borderColor: 'white', fontSize: '20px'}}
                     onClick={() => {
                       setOpenSnackbar(true)
                       onCopy();
