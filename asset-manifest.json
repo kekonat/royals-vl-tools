@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/royals-vl-tools/static/css/main.f855e6bc.css",
-    "main.js": "/royals-vl-tools/static/js/main.17ffd966.js",
+    "main.js": "/royals-vl-tools/static/js/main.d06ae56a.js",
     "static/js/592.7f72a991.chunk.js": "/royals-vl-tools/static/js/592.7f72a991.chunk.js",
     "static/media/official_bon_map.png": "/royals-vl-tools/static/media/official_bon_map.6a7cc31c1adc3307f262.png",
     "index.html": "/royals-vl-tools/index.html",
     "main.f855e6bc.css.map": "/royals-vl-tools/static/css/main.f855e6bc.css.map",
-    "main.17ffd966.js.map": "/royals-vl-tools/static/js/main.17ffd966.js.map",
+    "main.d06ae56a.js.map": "/royals-vl-tools/static/js/main.d06ae56a.js.map",
     "592.7f72a991.chunk.js.map": "/royals-vl-tools/static/js/592.7f72a991.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f855e6bc.css",
-    "static/js/main.17ffd966.js"
+    "static/js/main.d06ae56a.js"
   ]
 }
