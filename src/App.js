@@ -267,61 +267,55 @@ function App() {
   }
 
   const onCopy = () => {
-    const longestNameLength = Math.max(...(bonNames.map(name => name.length)));
-    const max = Math.max(longestNameLength, "Raffle:".length);
-    const withPadding = max + 2;
-
     let data = 
     beltAssignment.length ? [
-      bonToString(withPadding), 
-      beltToString(withPadding), 
-      nxToString(withPadding),
-      raffleToString(withPadding)
+      bonToString(), 
+      beltToString(), 
+      nxToString(),
+      raffleToString()
     ] : [
-      bonToString(withPadding), 
-      nxToString(withPadding),
-      raffleToString(withPadding)
+      bonToString(), 
+      nxToString(),
+      raffleToString()
     ]
 
-    let toString = "```\n" + data.join("\n\n") + "\n```\n"
+    let toString = data.join("\n");
     navigator.clipboard.writeText(toString);
   }
 
-  const bonToString = (length) => {
+  const bonToString = () => {
     const assignments = [];
+    const longestNameLength = Math.max(...(bonNames.map(name => name.length)));
 
     for (let i = 0; i < randomBoxGroups.length; i++) {
       if (bonNames.length) {
-        const nameWithPadding = bonNames[i].padEnd(length, ' ');
-        assignments.push(`${nameWithPadding}${randomBoxGroups[i]}`);
+        const nameWithPadding = bonNames[i].padEnd(longestNameLength, ' ');
+        assignments.push(`${nameWithPadding}  ${randomBoxGroups[i]}`);
       } else {
         assignments.push(randomBoxGroups[i]);
       }
     }
 
-    return "Bon:\n" + assignments.join("\n")
+    return "Bon:\n```\n" + assignments.join("\n") + "\n```";
   }
 
-  const beltToString = (length) => {
-    const prefix = "Belts:".padEnd(length, ' ');
-    return prefix + beltAssignment.join(" ");
+  const beltToString = () => {
+    return "Belts:\n```\n" + beltAssignment.join("\n") + "\n```";
   }
 
-  const nxToString = (length) => {
-    const prefix = "NX:".padEnd(length, ' ');
-    return prefix + nx.join(" ");
+  const nxToString = () => {
+    return "NX:\n```\n" + nx.join("\n") + "\n```";
   }
 
-  const raffleToString = (length) => {
-    const prefix = "Raffle:".padEnd(length, ' ');
-    return prefix + raffleWinner;
+  const raffleToString = () => {
+    return "Raffle:\n```\n" + raffleWinner + "\n```";
   }
 
   return (
     <Grid className="App" >
       <header className="App-header" >
         <Grid paddingLeft ={'20px'} paddingRight={'20px'}>
-          <Grid container justifyContent="center" maxWidth={'1200px'}>
+          <Grid container justifyContent="center" maxWidth={'1400px'}>
             <Grid item xs={12}>
               <p style={{ margin: '10px'}}>
                 List names of bonners
@@ -593,7 +587,7 @@ function App() {
                   item 
                   minWidth={'300px'}
                   minHeight={'200px'} 
-                  maxWidth={'1200px'} 
+                  maxWidth={'1400px'} 
                   maxHight={'700px'} 
                   marginTop={'10px'}
                   marginBottom={'10px'}
