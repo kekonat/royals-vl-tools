@@ -319,11 +319,11 @@ function App() {
 
   return (
     <Grid className="App" >
-      <header className="App-header">
+      <header className="App-header" >
         <Grid paddingLeft ={'20px'} paddingRight={'20px'}>
-          <Grid container justifyContent="center" >
+          <Grid container justifyContent="center" maxWidth={'1000px'}>
             <Grid item xs={12}>
-              <p>
+              <p style={{ margin: '10px'}}>
                 List names of bonners
                 <br/>
                 <small>
@@ -351,7 +351,7 @@ function App() {
               />
             </Grid>
             <Grid item xs={12}>
-              <p>
+              <p style={{ margin: '10px'}}>
                 List names of belt looters
               </p>
             </Grid>
@@ -370,9 +370,16 @@ function App() {
                 }}}
               />
             </Grid>
-            <Grid sx={{ borderRadius: '5px', width: '100%', color: 'red'}}>
-              <p>{error}</p>
-            </Grid>
+            {
+              error.length ? (
+                <Grid sx={{ borderRadius: '5px', width: '100%', color: 'red'}}>
+                  <p>{error}</p>
+                </Grid>
+              ) : (
+                <Grid />
+              )
+            }
+            
             <Grid container rowSpacing={1}>
               <Grid item container justifyContent="center">
                 <Button 
@@ -389,7 +396,7 @@ function App() {
             { !error && sortedBoxGroups.length ? (
               <Grid container sx={{ width: '100%', marginTop: '10px'}} justifyContent={'center'} spacing={1}>
                 <Grid item xs={12}>
-                  <p>
+                  <p style={{ margin: '10px'}}>
                     {sortedBoxGroups.length}-man bon
                   </p>
                 </Grid>
@@ -413,10 +420,10 @@ function App() {
                     <Grid item container xs={12}>
                       <Grid item xs={12}>
                         <Grid item xs={12} textAlign={'center'}>
-                          <h5>Boxes</h5>
+                          <h5 style={{ margin: '10px' }}>Boxes</h5>
                         </Grid>
                         <Grid item xs={12} textAlign={'center'}>
-                          <p style={{ whiteSpace: "pre-wrap" }}>
+                          <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
                           {
                             sortedBoxGroups.join("\n")
                           }
@@ -448,10 +455,10 @@ function App() {
                     <Grid item container xs={12}>
                       <Grid item xs={6}>
                         <Grid item xs={12} textAlign={'center'}>
-                          <h5>IGN</h5>
+                          <h5 style={{ margin: '10px' }}>IGN</h5>
                         </Grid>
                         <Grid item xs={12} textAlign={'center'}>
-                          <p style={{ whiteSpace: "pre-wrap" }}>
+                          <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
                             {
                               bonNames.join("\n")
                             }
@@ -460,10 +467,10 @@ function App() {
                       </Grid>
                       <Grid item xs={6}>
                         <Grid item xs={12} textAlign={'center'}>
-                          <h5>Boxes</h5>
+                          <h5 style={{ margin: '10px' }}>Boxes</h5>
                         </Grid>
                         <Grid item xs={12} textAlign={'center'}>
-                          <p style={{ whiteSpace: "pre-wrap" }}>
+                          <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
                             {
                               randomBoxGroups.join("\n")
                             }
@@ -495,7 +502,7 @@ function App() {
                       </Grid>
                       <Grid item container xs={12}>
                         <Grid item xs={12} textAlign={'center'}>
-                          <p style={{ whiteSpace: "pre-wrap" }}>
+                          <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
                             {
                               beltAssignment.join("\n")
                             }
@@ -529,7 +536,7 @@ function App() {
                     </Grid>
                     <Grid item container xs={12}>
                       <Grid item xs={12} textAlign={'center'}>
-                        <p style={{ whiteSpace: "pre-wrap" }}>
+                        <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
                           {
                             nx.join("\n")
                           }
@@ -559,7 +566,7 @@ function App() {
                     </Grid>
                     <Grid item container xs={12}>
                       <Grid item xs={12} textAlign={'center'}>
-                        <p style={{ whiteSpace: "pre-wrap" }}>
+                        <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
                           {raffleWinner}
                         </p>
                       </Grid>
@@ -567,7 +574,7 @@ function App() {
                   </Grid>
                 </Grid>
 
-                <Grid item marginTop={'10px'}>
+                <Grid item marginTop={'10px'} xs={12}>
                   <Button 
                     type="submit" 
                     sx={{color: 'white', borderColor: 'white'}}
@@ -586,8 +593,8 @@ function App() {
                   item 
                   minWidth={'300px'}
                   minHeight={'200px'} 
-                  maxWidth={'500px'} 
-                  maxHight={'300px'} 
+                  maxWidth={'800px'} 
+                  maxHight={'500px'} 
                   marginTop={'10px'}
                   marginBottom={'10px'}
                 >
