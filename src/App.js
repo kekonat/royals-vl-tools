@@ -1,48 +1,158 @@
 import './App.css';
-import { Grid, Button, Snackbar, TextareaAutosize, Checkbox, FormControlLabel, Tooltip } from '@mui/material';
+import { Grid, Button, Snackbar, TextareaAutosize } from '@mui/material';
 import React, { useState } from 'react';
 import officialBonImage from './official_bon_map.png';
 
 function App() {
-  const [text, setText] = useState('');
-  const [error, setError] = useState('');
-  const [result, setResult] = useState([]);
-  const [shuffled, setShuffled] = useState([]);
-  const [nx, setNx] = useState([]);
-  const [names, setNames] = useState([]);
-  const [openSnackbar, setOpenSnackbar] = useState(false)
-  const [includeNX, setIncludeNx] = useState(false)
+  const [bonTextArea, setBonTextArea] = useState('');
+  const [bonNames, setBonNames] = useState([]);
+  const [sortedBoxGroups, setSortedBoxGroups] = useState([]);
+  const [randomBoxGroups, setRandomBoxGroups] = useState([]);
 
+  const [beltTextArea, setBeltTextArea] = useState([]);
+  const [beltAssignment, setBeltAssignment] = useState([]);
+
+  const [raffleWinner, setRaffleWinner] = useState([]);
+  const [nx, setNx] = useState([]);
+
+  const [error, setError] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false)
+ 
   const handleClick = () => {
-    setNames([]);
+    setBonNames([]);
+    setBeltAssignment([]);
     setNx([]);
     setError('');
 
-    let parsed = parseInt(text);
-    if (isNaN(parsed)) {
-      handleNames(text);
-    } else if (parsed < 6 ||parsed > 30){
-      setError('Please enter a number between 6-30');
-    } else {
-      handleNumber(parsed);
-    }
-  }
-
-  const handleNames = (names) => {
-    const list = names.trim().split(/[\s,]+/)
-    if (list.length < 6 || list.length > 30) {
-      setError('Please list between 6-30 names');
+    let bonNames = parseBonNames(bonTextArea);
+    if (bonNames === null) {
       return;
     }
-    setNames(list);
-    handleNumber(list.length);
+
+    let { winners: bonWinners, losers: bonLosers } = assignBon(bonNames);
+
+    let beltNames = parseBeltNames(beltTextArea);
+    let { winners: beltWinners, losers: beltLosers} = assignBelts(beltNames);
+
+    let winners = bonWinners.concat(beltWinners);
+    let losers = bonLosers.concat(beltLosers);
+
+    let raffleWinner = assignRaffle(losers);
+    winners.push(raffleWinner);
+    losers = losers.filter(candidate => candidate !== raffleWinner);
+
+    assignNx(winners, losers);
   }
 
-  const handleNumber = (bon) => {
-    let less = Math.floor(30 / bon); 
+  const parseBonNames = (bonTextArea) => {
+    const names = bonTextArea.trim().split(/[\s,]+/)
+    if (names.length < 6 || names.length > 30) {
+      setError('Please list between 6-30 names');
+      return null;
+    }
+    setBonNames(names);
+    return names;
+  }
+
+  const parseBeltNames = (beltTextArea) => {
+    if (!beltTextArea || beltTextArea.length === 0) {
+      return [];
+    }
+    const trimmed = beltTextArea.trim();
+    if (trimmed.length === 0) {
+      return [];
+    }
+    return trimmed.split(/[\s,]+/);
+  }
+
+  const assignRaffle = (candidates) => {
+    const index = Math.floor(Math.random() * candidates.length);
+    const raffleWinner = candidates[index];
+    setRaffleWinner(raffleWinner);
+    return raffleWinner;
+  }
+
+  const assignBelts = (names) => {
+    const belters = names.length;
+    let winners = [];
+
+    let moreCount = 6 % belters;
+    let beltsForLosers = Math.floor(6 / belters);
+    let beltsForWinners = beltsForLosers + 1;
+
+    for (let i = 0; i < moreCount; i++) {
+      const index = Math.floor(Math.random() * names.length);
+      const removed = names.splice(index, 1);
+      const val = removed[0];
+      winners.push(val);    
+    }
+
+    let losers = names;
+
+    let results = [];
+    for (let i = 0; i < winners.length; i++) {
+      for (let j = 0; j < beltsForWinners; j++) {
+        results.push(winners[i]);
+      }
+    }
+
+    for (let i = 0; i < losers.length; i++) {
+      for (let j = 0; j < beltsForLosers; j++) {
+        results.push(losers[i]);
+      }
+    }
+
+    setBeltAssignment(results);
+
+    return {
+      winners,
+      losers
+    };
+  }
+
+  const assignBon = (bonNames) => {
+    const numBon = bonNames.length;
+    
+    const boxGroups = calculateBoxGroups(numBon);
+    setSortedBoxGroups(boxGroups);
+
+    let shuffled = [];
+    let winnersCount = 30 % numBon;
+
+    let indexes = [];
+    for (let i = 0; i < numBon; i++) {
+      indexes.push(i);
+      shuffled.push(null);
+    }
+
+    let winners = [];
+    for (let i = 0; i < winnersCount; i++) {
+      const index = Math.floor(Math.random()*indexes.length);
+      let removed = indexes.splice(index, 1);
+      let val = removed[0];
+      winners.push(bonNames[val]);
+      shuffled[val] = boxGroups[i];
+    }
+
+    let losers = [];
+    for (let i = winnersCount; i < numBon; i ++) {
+      const index = Math.floor(Math.random()*indexes.length);
+      let removed = indexes.splice(index, 1);
+      let val = removed[0];
+      losers.push(bonNames[val]);
+      shuffled[val] = boxGroups[i];
+    }
+
+    setRandomBoxGroups(shuffled);
+
+    return { winners, losers };
+  }
+
+  const calculateBoxGroups = (numBon) => {
+    let less = Math.floor(30 / numBon); 
     let more = less + 1;
-    let moreCount = 30 % bon;
-    let lessCount = bon - moreCount;
+    let moreCount = 30 % numBon;
+    let lessCount = numBon - moreCount;
 
     let pool = generate2DArray();
     reverseSecondHalf(pool);
@@ -104,67 +214,21 @@ function App() {
       retval[i].sort();
     }
 
-    setResult(retval);
-    const shuffled = shuffle(retval);
-    setShuffled(shuffled);
-
-    assignNx(shuffled);
+    return retval;
   }
 
-  const assignNx = (shuffled) => {
-    let copy = [...shuffled];
+  const assignNx = (winners, losers) => {
+    let nxWinners = [];
 
-    const winners = [];
-
-    while (winners.length < 6)
+    while (nxWinners.length < 6)
     {
-      let priority = getLessBoxes(copy);
-      let others = getMoreBoxes(copy);
-
-      while (winners.length < 6 && priority.length) {
-        const index = Math.floor(Math.random()*priority.length);
-        const val = priority.splice(index, 1);
-        winners.push(val);
-      }
-      
-      while (winners.length < 6 && others.length) {
-        const index = Math.floor(Math.random()*others.length);
-        const val = others.splice(index, 1);
-        winners.push(val);
-      }
+      let candidates = losers.length ? losers : winners;
+      const index = Math.floor(Math.random()*candidates.length);
+      const val = candidates.splice(index, 1);
+      nxWinners.push(val[0]);
     }
 
-    const dict = {};
-    for (let i = 0; i < shuffled.length; i++) {
-      dict[i] = 0;
-    }
-
-    const shuffledToString = shuffled.map(row => row.toString());
-
-    for (let i = 0; i < winners.length; i++) {
-      const index = shuffledToString.indexOf(winners[i].toString());
-      dict[index]++;
-    }
-
-    const nxAssignment = [];
-    for (let i = 0; i < shuffled.length; i++) {
-      nxAssignment.push(dict[i]);
-    }
-    setNx(nxAssignment);
-  }
-
-  const getLessBoxes = (results) => {
-    const copy = [...results];
-    copy.sort((a, b) => a.length - b.length);
-    const shortLength = copy[0].length;
-    return copy.filter(row => row.length === shortLength);
-  }
-
-  const getMoreBoxes = (results) => {
-    const copy = [...results];
-    copy.sort((a, b) => b.length - a.length);
-    const longerLength = copy[0].length;
-    return copy.filter(row => row.length === longerLength);
+    setNx(nxWinners);
   }
 
   const getBoxes = (pool, boxes) => {
@@ -202,47 +266,81 @@ function App() {
     data[5] = data[5].reverse();
   }
 
-  const shuffle = (original) => {
-    const array = [...original];
-    let currentIndex = array.length, randomIndex;
-  
-    // While there remain elements to shuffle.
-    while (currentIndex > 0) {
-      // Pick a remaining element.
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-  
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
+  const onCopy = () => {
+    const longestNameLength = Math.max(...(bonNames.map(name => name.length)));
+    const max = Math.max(longestNameLength, "Raffle:".length);
+    const withPadding = max + 2;
+
+    let data = 
+    beltAssignment.length ? [
+      bonToString(withPadding), 
+      beltToString(withPadding), 
+      nxToString(withPadding),
+      raffleToString(withPadding)
+    ] : [
+      bonToString(withPadding), 
+      nxToString(withPadding),
+      raffleToString(withPadding)
+    ]
+
+    let toString = "```\n" + data.join("\n\n") + "\n```\n"
+    navigator.clipboard.writeText(toString);
+  }
+
+  const bonToString = (length) => {
+    const assignments = [];
+
+    for (let i = 0; i < randomBoxGroups.length; i++) {
+      if (bonNames.length) {
+        const nameWithPadding = bonNames[i].padEnd(length, ' ');
+        assignments.push(`${nameWithPadding}${randomBoxGroups[i]}`);
+      } else {
+        assignments.push(randomBoxGroups[i]);
+      }
     }
-  
-    return array;
+
+    return "Bon:\n" + assignments.join("\n")
+  }
+
+  const beltToString = (length) => {
+    const prefix = "Belts:".padEnd(length, ' ');
+    return prefix + beltAssignment.join(" ");
+  }
+
+  const nxToString = (length) => {
+    const prefix = "NX:".padEnd(length, ' ');
+    return prefix + nx.join(" ");
+  }
+
+  const raffleToString = (length) => {
+    const prefix = "Raffle:".padEnd(length, ' ');
+    return prefix + raffleWinner;
   }
 
   return (
     <Grid className="App" >
       <header className="App-header">
-        <p>
-          Please specify a number<br/>or<br/>List names of bonners
-          <br/>
-          <small>
-          <small>
-          <small>
-          (Example Number: 10)<br/>
-          (Example Names: Cody Clem Jae Harley Alice Em Kuro)
-          </small>
-          </small>
-          </small>
-        </p>
         <Grid paddingLeft ={'20px'} paddingRight={'20px'}>
-          <Grid container justifyContent="center">
-            <Grid item>
+          <Grid container justifyContent="center" >
+            <Grid item xs={12}>
+              <p>
+                List names of bonners
+                <br/>
+                <small>
+                <small>
+                <small>
+                (Example Names: Cody Clem Jae Harley Alice Em Kuro)
+                </small>
+                </small>
+                </small>
+              </p>
+            </Grid>
+            <Grid item xs={12}>
               <TextareaAutosize 
                 inputProps={{style: { textAlign: 'center' }}}
                 id="outlined-basic" 
                 variant="outlined" 
-                onChange={event => setText(event.target.value) }
+                onChange={event => setBonTextArea(event.target.value) }
                 multiline
                 minRows={3}
                 classes={{notchedOutline: {
@@ -252,30 +350,30 @@ function App() {
                 }}}
               />
             </Grid>
-            <Grid sx={{ borderRadius: '5px', width: '100%'}}>
+            <Grid item xs={12}>
+              <p>
+                List names of belt looters
+              </p>
+            </Grid>
+            <Grid item xs={12}>
+              <TextareaAutosize 
+                inputProps={{style: { textAlign: 'center' }}}
+                id="outlined-basic" 
+                variant="outlined" 
+                onChange={event => setBeltTextArea(event.target.value) }
+                multiline
+                minRows={2}
+                classes={{notchedOutline: {
+                  noBorder: {
+                    border: "none",
+                  },
+                }}}
+              />
+            </Grid>
+            <Grid sx={{ borderRadius: '5px', width: '100%', color: 'red'}}>
               <p>{error}</p>
             </Grid>
             <Grid container rowSpacing={1}>
-              <Grid item container justifyContent="center">
-                <Tooltip title="Randomly select 6 people for nx, giving priority to those with few boxes" placement="top">
-                  <FormControlLabel
-                    label="Include NX?"
-                    control={
-                      <Checkbox
-                        checked={includeNX}
-                        onChange={()=>setIncludeNx(!includeNX)}
-                        inputProps={{ 'aria-label': 'controlled' }}
-                        sx={{
-                          color: "#DFE0EB",
-                          // "&.Mui-checked": {
-                          //     color: "#1DFB9D"
-                          // }
-                        }}
-                      />
-                    }
-                  />
-                </Tooltip> 
-              </Grid>
               <Grid item container justifyContent="center">
                 <Button 
                   type="submit" 
@@ -288,31 +386,29 @@ function App() {
               </Grid>
             </Grid>
 
-            { !error && result.length ? (
-              <Grid container sx={{ width: '100%', marginTop: '10px'}} justifyContent={'center'}>
+            { !error && sortedBoxGroups.length ? (
+              <Grid container sx={{ width: '100%', marginTop: '10px'}} justifyContent={'center'} spacing={1}>
                 <Grid item xs={12}>
                   <p>
-                    {result.length}-man bon
+                    {sortedBoxGroups.length}-man bon
                   </p>
                 </Grid>
                 <Grid 
                   item 
                   container 
-                  xs={ 
-                    names.length ? 4 : 6
-                  } 
+                  xs={4} 
                   justifyContent={'center'}
                 >
                   <Grid 
                     container 
                     sx={{ 
-                      width: '95%', 
+                      width: '100%', 
                       border: "1px solid lightgray",
                       borderRadius: "5px"
                     }} 
                   >
                     <Grid item xs={12} textAlign={'center'}>
-                      <h4 style={{ margin: '0px'}}>Ordered</h4>
+                      <h4 style={{ margin: '0px', marginTop: '10px'}}>Ordered Bon</h4>
                     </Grid>
                     <Grid item container xs={12}>
                       <Grid item xs={12}>
@@ -322,26 +418,11 @@ function App() {
                         <Grid item xs={12} textAlign={'center'}>
                           <p style={{ whiteSpace: "pre-wrap" }}>
                           {
-                            result.join("\n")
+                            sortedBoxGroups.join("\n")
                           }
                           </p>
                         </Grid>
                       </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item container justifyContent="center" columnSpacing={1}>
-                    <Grid item marginTop={'10px'}>
-                      <Button 
-                        type="submit" 
-                        onClick={() => {
-                          setOpenSnackbar(true)
-                          navigator.clipboard.writeText("```\n" + result.join("\n") + "\n```\n");
-                        }}
-                        variant="outlined"
-                        sx={{color: 'white', borderColor: 'white'}}
-                      >
-                        Copy Ordered
-                      </Button>        
                     </Grid>
                   </Grid>
                 </Grid>
@@ -349,9 +430,7 @@ function App() {
                 <Grid 
                   item 
                   container 
-                  xs={
-                    names.length ? 8 : 6 
-                  }
+                  xs={8}
                   textAlign={'center'}
                   justifyContent={'center'}
                 >
@@ -364,107 +443,144 @@ function App() {
                     }} 
                   >
                     <Grid item xs={12} textAlign={'center'}>
-                      <h4 style={{ margin: '0px'}}>Random</h4>
+                      <h4 style={{ margin: '0px', marginTop: '10px'}}>Random Bon</h4>
                     </Grid>
                     <Grid item container xs={12}>
-                      { names.length ? (
-                        <Grid item xs={ includeNX ? 3 : 6}>
-                          <Grid item xs={12} textAlign={'center'}>
-                            <h5>IGN</h5>
-                          </Grid>
-                          <Grid item xs={12} textAlign={'center'}>
-                            <p style={{ whiteSpace: "pre-wrap" }}>
-                              {
-                                names.join("\n")
-                              }
-                            </p>
-                          </Grid>
+                      <Grid item xs={6}>
+                        <Grid item xs={12} textAlign={'center'}>
+                          <h5>IGN</h5>
                         </Grid>
-                      ) : (
-                        <Grid />
-                      )}
-
-                      <Grid item xs={ !names.length && !includeNX ? 12 : 6 }>
+                        <Grid item xs={12} textAlign={'center'}>
+                          <p style={{ whiteSpace: "pre-wrap" }}>
+                            {
+                              bonNames.join("\n")
+                            }
+                          </p>
+                        </Grid>
+                      </Grid>
+                      <Grid item xs={6}>
                         <Grid item xs={12} textAlign={'center'}>
                           <h5>Boxes</h5>
                         </Grid>
                         <Grid item xs={12} textAlign={'center'}>
                           <p style={{ whiteSpace: "pre-wrap" }}>
                             {
-                              shuffled.join("\n")
+                              randomBoxGroups.join("\n")
                             }
                           </p>
                         </Grid>
                       </Grid>
-                      { includeNX ? (
-                        <Grid item xs={ names.length ? 3 : 6}>
-                          <Grid item xs={12} textAlign={'center'}>
-                            <h5>NX</h5>
-                          </Grid>
-                          <Grid item xs={12} textAlign={'center'}>
-                            <p style={{ whiteSpace: "pre-wrap" }}>
-                              {
-                                nx.join("\n")
-                              }
-                            </p>
-                          </Grid>
-                        </Grid>
-                      ) : (
-                        <Grid />
-                      )}
                     </Grid>
                   </Grid>
-                  <Grid item marginTop={'10px'}>
-                    <Button 
-                      type="submit" 
-                      sx={{color: 'white', borderColor: 'white'}}
-                      onClick={() => {
-                        setOpenSnackbar(true)
-                        const assignments = [];
-                        const longestNameLength = Math.max(...(names.map(name => name.length)));
-
-                        for (let i = 0; i < shuffled.length; i++) {
-                          if (names.length) {
-                            const nameWithPadding = names[i].padEnd(longestNameLength, ' ');
-                            assignments.push(`${nameWithPadding}  ${shuffled[i]}`);
-                          } else {
-                            assignments.push(shuffled[i]);
-                          }
-                        }
-                        navigator.clipboard.writeText("```\n" + assignments.join("\n") + "\n```\n");
-                      }}
-                      variant="outlined"
-                    >
-                      Copy Random
-                    </Button>        
-                  </Grid>
-                  { includeNX ? (
-                    <Grid item marginTop={'10px'} marginLeft={'10px'}>
-                      <Button 
-                        type="submit" 
-                        onClick={() => {
-                          setOpenSnackbar(true)
-                          const winners = [];
-                          for (let i = 0; i < nx.length; i++) {
-                            const count = nx[i];
-                            if (count === 1) {
-                              winners.push(`${names[i]}`);
-                            } else if (count > 1) {
-                              winners.push(`${names[i]}x${count}`);
-                            }
-                          }
-                          navigator.clipboard.writeText("```\n" + winners.join("\n") + "\n```\n");
-                        }}
-                        variant="outlined"
-                        sx={{color: 'white', borderColor: 'white'}}
-                      >
-                        Copy NX
-                      </Button>
-                    </Grid>
-                  ) : (
-                    <Grid />
-                  )}
                 </Grid>
+
+                { beltAssignment.length ? (
+                  <Grid 
+                    item 
+                    container 
+                    xs={4}
+                    textAlign={'center'}
+                    justifyContent={'center'}
+                  >
+                    <Grid 
+                      container 
+                      justifyContent={'center'}
+                      sx={{ 
+                        border: "1px solid lightgray",
+                        borderRadius: "5px"
+                      }} 
+                    >
+                      <Grid item xs={12} textAlign={'center'}>
+                        <h4 style={{ margin: '0px', marginTop: '10px'}}>Belts</h4>
+                      </Grid>
+                      <Grid item container xs={12}>
+                        <Grid item xs={12} textAlign={'center'}>
+                          <p style={{ whiteSpace: "pre-wrap" }}>
+                            {
+                              beltAssignment.join("\n")
+                            }
+                          </p>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                ) : (
+                  <Grid></Grid>
+                )}
+                
+
+                <Grid 
+                  item 
+                  container 
+                  xs={ beltAssignment.length ? 4 : 6}
+                  textAlign={'center'}
+                  justifyContent={'center'}
+                >
+                  <Grid 
+                    container 
+                    justifyContent={'center'}
+                    sx={{ 
+                      border: "1px solid lightgray",
+                      borderRadius: "5px"
+                    }} 
+                  >
+                    <Grid item xs={12} textAlign={'center'}>
+                      <h4 style={{ margin: '0px', marginTop: '10px'}}>NX</h4>
+                    </Grid>
+                    <Grid item container xs={12}>
+                      <Grid item xs={12} textAlign={'center'}>
+                        <p style={{ whiteSpace: "pre-wrap" }}>
+                          {
+                            nx.join("\n")
+                          }
+                        </p>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                <Grid 
+                  item 
+                  container 
+                  xs={ beltAssignment.length ? 4 : 6}
+                  textAlign={'center'}
+                  justifyContent={'center'}
+                >
+                  <Grid 
+                    container 
+                    justifyContent={'center'}
+                    sx={{ 
+                      border: "1px solid lightgray",
+                      borderRadius: "5px"
+                    }} 
+                  >
+                    <Grid item xs={12} textAlign={'center'}>
+                      <h4 style={{ margin: '0px', marginTop: '10px'}}>Raffle</h4>
+                    </Grid>
+                    <Grid item container xs={12}>
+                      <Grid item xs={12} textAlign={'center'}>
+                        <p style={{ whiteSpace: "pre-wrap" }}>
+                          {raffleWinner}
+                        </p>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                <Grid item marginTop={'10px'}>
+                  <Button 
+                    type="submit" 
+                    sx={{color: 'white', borderColor: 'white'}}
+                    onClick={() => {
+                      setOpenSnackbar(true)
+                      onCopy();
+                    }}
+                    variant="outlined"
+                  >
+                    Copy
+                  </Button>        
+                </Grid>
+
                 <Grid 
                   container 
                   item 
@@ -493,39 +609,4 @@ function App() {
     </Grid>
   );
 }
-
-// function Table(result) {
-//   return (
-//     <TableContainer component={Paper}>
-//       <Table sx={{ minWidth: 650 }} aria-label="simple table">
-//         <TableHead>
-//           <TableRow>
-//             <TableCell>Dessert (100g serving)</TableCell>
-//             <TableCell align="right">Calories</TableCell>
-//             <TableCell align="right">Fat&nbsp;(g)</TableCell>
-//             <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-//             <TableCell align="right">Protein&nbsp;(g)</TableCell>
-//           </TableRow>
-//         </TableHead>
-//         <TableBody>
-//           {rows.map((row) => (
-//             <TableRow
-//               key={row.name}
-//               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-//             >
-//               <TableCell component="th" scope="row">
-//                 {row.name}
-//               </TableCell>
-//               <TableCell align="right">{row.calories}</TableCell>
-//               <TableCell align="right">{row.fat}</TableCell>
-//               <TableCell align="right">{row.carbs}</TableCell>
-//               <TableCell align="right">{row.protein}</TableCell>
-//             </TableRow>
-//           ))}
-//         </TableBody>
-//       </Table>
-//     </TableContainer>
-//   );
-// }
-
 export default App;
