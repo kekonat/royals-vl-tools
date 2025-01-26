@@ -2,6 +2,7 @@ import './App.css';
 import { Grid, Button, Snackbar, TextareaAutosize, Checkbox, FormControlLabel } from '@mui/material';
 import React, { useState } from 'react';
 import officialBonImage from './official_bon_map.png';
+import backgroundImage from './lhc.jpeg';
 
 function App() {
   const [bonTextArea, setBonTextArea] = useState('');
@@ -316,351 +317,362 @@ function App() {
   }
 
   return (
-    <Grid className="App" >
-      <header className="App-header" >
-        <Grid paddingLeft ={'20px'} paddingRight={'20px'}>
-          <Grid container justifyContent="center" maxWidth={'1400px'}>
-            <Grid item xs={12}>
-              <p style={{ margin: '10px'}}>
-                List names of bonners
-                <br/>
-                <small>
-                <small>
-                <small>
-                (Example Names: Cody Clem Jae Harley Alice Em Kuro)
-                </small>
-                </small>
-                </small>
-              </p>
-            </Grid>
-            <Grid item xs={12}>
-              <TextareaAutosize 
-                inputProps={{style: { textAlign: 'center' }}}
-                id="outlined-basic" 
-                variant="outlined" 
-                onChange={event => setBonTextArea(event.target.value) }
-                multiline
-                minRows={3}
-                classes={{notchedOutline: {
-                  noBorder: {
-                    border: "none",
-                  },
-                }}}
-              />
-            </Grid>
-            { enableBelts ? (
+    <Grid container className="App" 
+      sx={{
+        backgroundImage:`url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundAttachment: 'fixed', // Ensures the background image stays fixed
+        backgroundPosition: 'center', // Optional: Centers the image
+        backgroundRepeat: 'no-repeat', // Optional: Prevents image repetition
+      }} 
+      justifyContent="center"
+    >
+      <Grid item sx={{height: '100%', width: '60%', opacity: 0.9}}>
+        <header className="App-header">
+          <Grid paddingLeft ={'20px'} paddingRight={'20px'} >
+            <Grid container justifyContent="center" maxWidth={'1400px'}>
               <Grid item xs={12}>
+                <p style={{ margin: '10px'}}>
+                  List names of bonners
+                  <br/>
+                  <small>
+                  <small>
+                  <small>
+                  (Example Names: Cody Clem Jae Harley Alice Em Kuro)
+                  </small>
+                  </small>
+                  </small>
+                </p>
+              </Grid>
+              <Grid item xs={12}>
+                <TextareaAutosize 
+                  inputProps={{style: { textAlign: 'center' }}}
+                  id="outlined-basic" 
+                  variant="outlined" 
+                  onChange={event => setBonTextArea(event.target.value) }
+                  multiline
+                  minRows={3}
+                  classes={{notchedOutline: {
+                    noBorder: {
+                      border: "none",
+                    },
+                  }}}
+                />
+              </Grid>
+              { enableBelts ? (
                 <Grid item xs={12}>
-                  <p style={{ margin: '10px'}}>
-                    List names of belt looters
-                  </p>
+                  <Grid item xs={12}>
+                    <p style={{ margin: '10px'}}>
+                      List names of belt looters
+                    </p>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextareaAutosize 
+                      inputProps={{style: { textAlign: 'center' }}}
+                      id="outlined-basic" 
+                      variant="outlined" 
+                      onChange={event => setBeltTextArea(event.target.value) }
+                      multiline
+                      minRows={2}
+                      classes={{notchedOutline: {
+                        noBorder: {
+                          border: "none",
+                        },
+                      }}}
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                  <TextareaAutosize 
-                    inputProps={{style: { textAlign: 'center' }}}
-                    id="outlined-basic" 
-                    variant="outlined" 
-                    onChange={event => setBeltTextArea(event.target.value) }
-                    multiline
-                    minRows={2}
-                    classes={{notchedOutline: {
-                      noBorder: {
-                        border: "none",
-                      },
-                    }}}
-                  />
+              ) : <div />
+            }
+              <Grid item xs={12}>
+                  <FormControlLabel control={
+                    <Checkbox 
+                      checked={enableBelts}
+                      onChange={(event) => {
+                        setEnableBelts(event.target.checked);
+                        setBeltAssignment([]);
+                        setBeltTextArea([])
+                      }}
+                      sx={{
+                        color: 'white'
+                      }}
+                    />
+                  } label="Belts" />
+                  <FormControlLabel control={
+                    <Checkbox 
+                      checked={enableRaffle} 
+                      onChange={(event) => setEnableRaffle(event.target.checked)}
+                      sx={{
+                        color: 'white'
+                      }}
+                    />
+                  } label="Raffle" />
+                  <FormControlLabel control={
+                    <Checkbox 
+                      checked={enableNX} 
+                      onChange={(event) => setEnableNX(event.target.checked)}
+                      sx={{
+                        color: 'white'
+                      }}
+                    />
+                  } label="NX" />
+              </Grid>
+              {
+                error.length ? (
+                  <Grid sx={{ borderRadius: '5px', width: '100%', color: 'red'}}>
+                    <p>{error}</p>
+                  </Grid>
+                ) : (
+                  <Grid />
+                )
+              }
+              
+              <Grid container rowSpacing={1}>
+                <Grid item container justifyContent="center">
+                  <Button 
+                    type="submit" 
+                    onClick={handleClick}
+                    variant="outlined"
+                    sx={{color: 'white', borderColor: 'white', fontSize: '20px'}}
+                  >
+                      Generate
+                  </Button>        
                 </Grid>
               </Grid>
-            ) : <div />
-          }
-            <Grid item xs={12}>
-                <FormControlLabel control={
-                  <Checkbox 
-                    checked={enableBelts}
-                    onChange={(event) => {
-                      setEnableBelts(event.target.checked);
-                      setBeltAssignment([]);
-                      setBeltTextArea([])
-                    }}
-                    sx={{
-                      color: 'white'
-                    }}
-                  />
-                } label="Belts" />
-                <FormControlLabel control={
-                  <Checkbox 
-                    checked={enableRaffle} 
-                    onChange={(event) => setEnableRaffle(event.target.checked)}
-                    sx={{
-                      color: 'white'
-                    }}
-                  />
-                } label="Raffle" />
-                <FormControlLabel control={
-                  <Checkbox 
-                    checked={enableNX} 
-                    onChange={(event) => setEnableNX(event.target.checked)}
-                    sx={{
-                      color: 'white'
-                    }}
-                  />
-                } label="NX" />
-            </Grid>
-            {
-              error.length ? (
-                <Grid sx={{ borderRadius: '5px', width: '100%', color: 'red'}}>
-                  <p>{error}</p>
+
+              { !error && sortedBoxGroups.length ? (
+                <Grid container sx={{ width: '100%', marginTop: '10px'}} justifyContent={'center'} spacing={1}>
+                  <Grid item xs={12}>
+                    <p style={{ margin: '10px'}}>
+                      {sortedBoxGroups.length}-man bon
+                    </p>
+                  </Grid>
+                  <Grid 
+                    item 
+                    container 
+                    xs={4} 
+                    justifyContent={'center'}
+                  >
+                    <Grid 
+                      container 
+                      sx={{ 
+                        width: '100%', 
+                        border: "1px solid lightgray",
+                        borderRadius: "5px"
+                      }} 
+                    >
+                      <Grid item xs={12} textAlign={'center'}>
+                        <h4 style={{ margin: '0px', marginTop: '10px'}}>Ordered Bon</h4>
+                      </Grid>
+                      <Grid item container xs={12}>
+                        <Grid item xs={12}>
+                          <Grid item xs={12} textAlign={'center'}>
+                            <h5 style={{ margin: '10px' }}>Boxes</h5>
+                          </Grid>
+                          <Grid item xs={12} textAlign={'center'}>
+                            <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
+                            {
+                              sortedBoxGroups.join("\n")
+                            }
+                            </p>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+
+                  <Grid 
+                    item 
+                    container 
+                    xs={8}
+                    textAlign={'center'}
+                    justifyContent={'center'}
+                  >
+                    <Grid 
+                      container 
+                      justifyContent={'center'}
+                      sx={{ 
+                        border: "1px solid lightgray",
+                        borderRadius: "5px"
+                      }} 
+                    >
+                      <Grid item xs={12} textAlign={'center'}>
+                        <h4 style={{ margin: '0px', marginTop: '10px'}}>Random Bon</h4>
+                      </Grid>
+                      <Grid item container xs={12}>
+                        <Grid item xs={6}>
+                          <Grid item xs={12} textAlign={'center'}>
+                            <h5 style={{ margin: '10px' }}>IGN</h5>
+                          </Grid>
+                          <Grid item xs={12} textAlign={'center'}>
+                            <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
+                              {
+                                bonNames.join("\n")
+                              }
+                            </p>
+                          </Grid>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Grid item xs={12} textAlign={'center'}>
+                            <h5 style={{ margin: '10px' }}>Boxes</h5>
+                          </Grid>
+                          <Grid item xs={12} textAlign={'center'}>
+                            <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
+                              {
+                                randomBoxGroups.join("\n")
+                              }
+                            </p>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+
+                  <Grid 
+                    item 
+                    container 
+                    xs={12}
+                    textAlign={'center'}
+                    justifyContent={'center'}
+                    spacing={1}
+                  >                  
+                  { enableBelts && beltAssignment.length ? (
+                      <Grid 
+                        item 
+                        container 
+                        xs={4}
+                        textAlign={'center'}
+                        justifyContent={'center'}
+                      >
+                        <Grid 
+                          container 
+                          justifyContent={'center'}
+                          sx={{ 
+                            border: "1px solid lightgray",
+                            borderRadius: "5px"
+                          }} 
+                        >
+                          <Grid item xs={12} textAlign={'center'}>
+                            <h4 style={{ margin: '0px', marginTop: '10px'}}>Belts</h4>
+                          </Grid>
+                          <Grid item container xs={12}>
+                            <Grid item xs={12} textAlign={'center'}>
+                              <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
+                                {
+                                  beltAssignment.join("\n")
+                                }
+                              </p>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    ) : (
+                      <Grid></Grid>
+                    )}
+                    
+                    { enableNX ? (
+                      <Grid 
+                        item 
+                        container 
+                        xs={4}
+                        textAlign={'center'}
+                        justifyContent={'center'}
+                      >
+                        <Grid 
+                          container 
+                          justifyContent={'center'}
+                          sx={{ 
+                            border: "1px solid lightgray",
+                            borderRadius: "5px"
+                          }} 
+                        >
+                          <Grid item xs={12} textAlign={'center'}>
+                            <h4 style={{ margin: '0px', marginTop: '10px'}}>NX</h4>
+                          </Grid>
+                          <Grid item container xs={12}>
+                            <Grid item xs={12} textAlign={'center'}>
+                              <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
+                                {
+                                  nx.join("\n")
+                                }
+                              </p>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    ) : <Grid /> }
+
+                    { enableRaffle ? (
+                      <Grid 
+                        item 
+                        container 
+                        xs={4}
+                        textAlign={'center'}
+                        justifyContent={'center'}
+                      >
+                        <Grid 
+                          container 
+                          justifyContent={'center'}
+                          sx={{ 
+                            border: "1px solid lightgray",
+                            borderRadius: "5px"
+                          }} 
+                        >
+                          <Grid item xs={12} textAlign={'center'}>
+                            <h4 style={{ margin: '0px', marginTop: '10px'}}>Raffle</h4>
+                          </Grid>
+                          <Grid item container xs={12}>
+                            <Grid item xs={12} textAlign={'center'}>
+                              <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
+                                {raffleWinner}
+                              </p>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    ) : <Grid /> }
+                  </Grid>
+
+                  <Grid item marginTop={'10px'} xs={6}>
+                    <Button 
+                      type="submit" 
+                      sx={{color: 'white', borderColor: 'white', fontSize: '20px'}}
+                      onClick={() => {
+                        setOpenSnackbar(true)
+                        onCopy();
+                      }}
+                      variant="outlined"
+                    >
+                      Copy
+                    </Button>        
+                  </Grid>
+
+                  <Grid 
+                    container 
+                    item 
+                    minWidth={'300px'}
+                    minHeight={'200px'} 
+                    maxWidth={'1400px'} 
+                    maxHight={'700px'} 
+                    marginTop={'10px'}
+                    marginBottom={'10px'}
+                  >
+                    <img src={officialBonImage} alt="logo" style={{objectFit: 'contain', width: '100%', height: '100%'}} />
+                  </Grid>
                 </Grid>
               ) : (
                 <Grid />
-              )
-            }
-            
-            <Grid container rowSpacing={1}>
-              <Grid item container justifyContent="center">
-                <Button 
-                  type="submit" 
-                  onClick={handleClick}
-                  variant="outlined"
-                  sx={{color: 'white', borderColor: 'white', fontSize: '20px'}}
-                >
-                    Generate
-                </Button>        
-              </Grid>
+              )}
             </Grid>
-
-            { !error && sortedBoxGroups.length ? (
-              <Grid container sx={{ width: '100%', marginTop: '10px'}} justifyContent={'center'} spacing={1}>
-                <Grid item xs={12}>
-                  <p style={{ margin: '10px'}}>
-                    {sortedBoxGroups.length}-man bon
-                  </p>
-                </Grid>
-                <Grid 
-                  item 
-                  container 
-                  xs={4} 
-                  justifyContent={'center'}
-                >
-                  <Grid 
-                    container 
-                    sx={{ 
-                      width: '100%', 
-                      border: "1px solid lightgray",
-                      borderRadius: "5px"
-                    }} 
-                  >
-                    <Grid item xs={12} textAlign={'center'}>
-                      <h4 style={{ margin: '0px', marginTop: '10px'}}>Ordered Bon</h4>
-                    </Grid>
-                    <Grid item container xs={12}>
-                      <Grid item xs={12}>
-                        <Grid item xs={12} textAlign={'center'}>
-                          <h5 style={{ margin: '10px' }}>Boxes</h5>
-                        </Grid>
-                        <Grid item xs={12} textAlign={'center'}>
-                          <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
-                          {
-                            sortedBoxGroups.join("\n")
-                          }
-                          </p>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-
-                <Grid 
-                  item 
-                  container 
-                  xs={8}
-                  textAlign={'center'}
-                  justifyContent={'center'}
-                >
-                  <Grid 
-                    container 
-                    justifyContent={'center'}
-                    sx={{ 
-                      border: "1px solid lightgray",
-                      borderRadius: "5px"
-                    }} 
-                  >
-                    <Grid item xs={12} textAlign={'center'}>
-                      <h4 style={{ margin: '0px', marginTop: '10px'}}>Random Bon</h4>
-                    </Grid>
-                    <Grid item container xs={12}>
-                      <Grid item xs={6}>
-                        <Grid item xs={12} textAlign={'center'}>
-                          <h5 style={{ margin: '10px' }}>IGN</h5>
-                        </Grid>
-                        <Grid item xs={12} textAlign={'center'}>
-                          <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
-                            {
-                              bonNames.join("\n")
-                            }
-                          </p>
-                        </Grid>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Grid item xs={12} textAlign={'center'}>
-                          <h5 style={{ margin: '10px' }}>Boxes</h5>
-                        </Grid>
-                        <Grid item xs={12} textAlign={'center'}>
-                          <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
-                            {
-                              randomBoxGroups.join("\n")
-                            }
-                          </p>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-
-                <Grid 
-                  item 
-                  container 
-                  xs={12}
-                  textAlign={'center'}
-                  justifyContent={'center'}
-                  spacing={1}
-                >                  
-                { enableBelts && beltAssignment.length ? (
-                    <Grid 
-                      item 
-                      container 
-                      xs={4}
-                      textAlign={'center'}
-                      justifyContent={'center'}
-                    >
-                      <Grid 
-                        container 
-                        justifyContent={'center'}
-                        sx={{ 
-                          border: "1px solid lightgray",
-                          borderRadius: "5px"
-                        }} 
-                      >
-                        <Grid item xs={12} textAlign={'center'}>
-                          <h4 style={{ margin: '0px', marginTop: '10px'}}>Belts</h4>
-                        </Grid>
-                        <Grid item container xs={12}>
-                          <Grid item xs={12} textAlign={'center'}>
-                            <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
-                              {
-                                beltAssignment.join("\n")
-                              }
-                            </p>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  ) : (
-                    <Grid></Grid>
-                  )}
-                  
-                  { enableNX ? (
-                    <Grid 
-                      item 
-                      container 
-                      xs={4}
-                      textAlign={'center'}
-                      justifyContent={'center'}
-                    >
-                      <Grid 
-                        container 
-                        justifyContent={'center'}
-                        sx={{ 
-                          border: "1px solid lightgray",
-                          borderRadius: "5px"
-                        }} 
-                      >
-                        <Grid item xs={12} textAlign={'center'}>
-                          <h4 style={{ margin: '0px', marginTop: '10px'}}>NX</h4>
-                        </Grid>
-                        <Grid item container xs={12}>
-                          <Grid item xs={12} textAlign={'center'}>
-                            <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
-                              {
-                                nx.join("\n")
-                              }
-                            </p>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  ) : <Grid /> }
-
-                  { enableRaffle ? (
-                    <Grid 
-                      item 
-                      container 
-                      xs={4}
-                      textAlign={'center'}
-                      justifyContent={'center'}
-                    >
-                      <Grid 
-                        container 
-                        justifyContent={'center'}
-                        sx={{ 
-                          border: "1px solid lightgray",
-                          borderRadius: "5px"
-                        }} 
-                      >
-                        <Grid item xs={12} textAlign={'center'}>
-                          <h4 style={{ margin: '0px', marginTop: '10px'}}>Raffle</h4>
-                        </Grid>
-                        <Grid item container xs={12}>
-                          <Grid item xs={12} textAlign={'center'}>
-                            <p style={{ whiteSpace: "pre-wrap", margin: '10px' }}>
-                              {raffleWinner}
-                            </p>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  ) : <Grid /> }
-                </Grid>
-
-                <Grid item marginTop={'10px'} xs={6}>
-                  <Button 
-                    type="submit" 
-                    sx={{color: 'white', borderColor: 'white', fontSize: '20px'}}
-                    onClick={() => {
-                      setOpenSnackbar(true)
-                      onCopy();
-                    }}
-                    variant="outlined"
-                  >
-                    Copy
-                  </Button>        
-                </Grid>
-
-                <Grid 
-                  container 
-                  item 
-                  minWidth={'300px'}
-                  minHeight={'200px'} 
-                  maxWidth={'1400px'} 
-                  maxHight={'700px'} 
-                  marginTop={'10px'}
-                  marginBottom={'10px'}
-                >
-                  <img src={officialBonImage} alt="logo" style={{objectFit: 'contain', width: '100%', height: '100%'}} />
-                </Grid>
-              </Grid>
-            ) : (
-              <Grid />
-            )}
           </Grid>
-        </Grid>
-        <Snackbar
-          open={openSnackbar}
-          onClose={() => setOpenSnackbar(false)}
-          autoHideDuration={2000}
-          message="Copied to clipboard"
-        />
-      </header>
+          <Snackbar
+            open={openSnackbar}
+            onClose={() => setOpenSnackbar(false)}
+            autoHideDuration={2000}
+            message="Copied to clipboard"
+          />
+        </header>
+      </Grid>
     </Grid>
   );
 }
