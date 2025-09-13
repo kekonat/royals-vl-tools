@@ -1,6 +1,6 @@
 import './App.css';
 import { Grid, Button, Snackbar, TextareaAutosize, Checkbox, FormControlLabel } from '@mui/material';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import officialBonImage from './official_bon_map.png';
 import backgroundImage from './lhc.jpeg';
 
@@ -22,6 +22,7 @@ function App() {
   const [enableNX, setEnableNX] = useState(false);
   const [enableBelts, setEnableBelts] = useState(true);
   const [enableRaffle, setEnableRaffle] = useState(true);
+  const [enableBonMap, setEnableBonMap] = useState(true);
 
   const handleClick = () => {
     setBonNames([]);
@@ -283,6 +284,9 @@ function App() {
     if (enableRaffle) {
       data = data.concat(raffleToString())
     }
+    if (enableBonMap) {
+      data = data.concat(bonMapToString())
+    }
 
     let toString = data.join("\n");
     navigator.clipboard.writeText(toString);
@@ -314,6 +318,14 @@ function App() {
 
   const raffleToString = () => {
     return "Raffle:\n```\n" + raffleWinner + "\n```";
+  }
+
+  const bonMapToString = () => {
+    return "Bon Map:\n```\n" + 
+      "A1 A2 A3 A4 A5   B1 B2 B3 B4 B5\n" +
+      "C1 C2 C3 C4 C5   D1 D2 D3 D4 D5\n" +
+      "E1 E2 E3 E4 E5   F1 F2 F3 F4 F5\n" +
+      "```";
   }
 
   return (
@@ -416,6 +428,15 @@ function App() {
                       }}
                     />
                   } label="NX" />
+                  <FormControlLabel control={
+                    <Checkbox 
+                      checked={enableBonMap} 
+                      onChange={(event) => setEnableBonMap(event.target.checked)}
+                      sx={{
+                        color: 'white'
+                      }}
+                    />
+                  } label="Bon Map" />
               </Grid>
               {
                 error.length ? (
